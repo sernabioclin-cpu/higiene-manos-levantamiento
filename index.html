@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#9F2241">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Higiene de Manos · Levantamiento de insumos · HGR Reynosa</title>
+<style>
+:root{
+  --guinda:#9F2241; --guinda-2:#6E1730; --dorado:#BC955C; --fondo:#F7F5F2; --tarjeta:#fff;
+  --texto:#1F1F1F; --sub:#6B6B6B; --linea:#E4DFD8;
+  --ok:#1E7B47; --ok-bg:#E4F3EA; --warn:#9A6300; --warn-bg:#FDF1D8; --bad:#B3261E; --bad-bg:#FBE4E2;
+  --na:#5F6368; --na-bg:#ECEDEF;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--fondo);color:var(--texto);font:15px/1.35 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+header{position:sticky;top:0;z-index:20;background:#fff;border-bottom:3px solid var(--guinda);padding:10px 14px 8px;padding-top:calc(10px + env(safe-area-inset-top))}
+.htop{display:flex;align-items:center;gap:10px}
+.htop h1{font-size:15px;margin:0;color:var(--guinda-2);line-height:1.15;flex:1}
+.htop h1 small{display:block;font-weight:500;color:var(--sub);font-size:11.5px}
+.pill{font-size:12px;padding:5px 10px;border-radius:999px;border:1px solid var(--linea);background:#fff;white-space:nowrap;cursor:pointer}
+.pill.pend{background:var(--warn-bg);color:var(--warn);border-color:#EED7A6}
+.pill.okp{background:var(--ok-bg);color:var(--ok);border-color:#BFE3CD}
+.pill.err{background:var(--bad-bg);color:var(--bad);border-color:#F1BDB8}
+nav{display:flex;gap:4px;margin-top:8px}
+nav button{flex:1;border:0;background:transparent;padding:7px 4px;font-size:13.5px;color:var(--sub);border-radius:8px;font-weight:600}
+nav button.act{background:#F5EDEF;color:var(--guinda-2)}
+main{padding:12px 12px 140px;max-width:760px;margin:0 auto}
+section{display:none}section.act{display:block}
+.card{background:var(--tarjeta);border:1px solid var(--linea);border-radius:14px;padding:12px;margin-bottom:12px}
+.card h2{font-size:13px;text-transform:uppercase;letter-spacing:.04em;color:var(--sub);margin:0 0 8px;font-weight:700}
+label.lbl{display:block;font-size:12.5px;color:var(--sub);margin:8px 0 4px;font-weight:600}
+select,input[type=text],input[type=url],textarea{width:100%;font-size:16px;padding:11px 12px;border:1px solid #CFC8BF;border-radius:10px;background:#fff;color:var(--texto)}
+textarea{min-height:64px;resize:vertical}
+.fila{display:flex;gap:8px;align-items:center}
+.btn-ico{min-width:46px;height:46px;border-radius:10px;border:1px solid #CFC8BF;background:#fff;font-size:22px;font-weight:700;color:var(--guinda-2)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1.5px solid var(--linea);background:#fff;border-radius:999px;padding:8px 12px;font-size:13.5px;font-weight:600;color:#333}
+.chip.sel{border-color:var(--guinda);background:#F5EDEF;color:var(--guinda-2)}
+.ident{font-size:19px!important;font-weight:700;text-align:center}
+.prefijo{font-weight:700;color:var(--guinda-2);white-space:nowrap;font-size:14px}
+/* filas de verificación */
+.item{padding:10px 0;border-top:1px solid #F0ECE6}
+.item:first-of-type{border-top:0}
+.item .t{font-weight:700;font-size:15px;margin-bottom:7px;display:flex;align-items:center;gap:6px}
+.item .t .ic{font-size:19px}
+.item.miss .t{color:var(--bad)}
+.item.miss .t::after{content:"Falta responder";font-size:11px;background:var(--bad-bg);color:var(--bad);padding:2px 7px;border-radius:999px;margin-left:auto}
+.seg{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.seg button,.grid4 button{min-height:46px;border-radius:10px;border:1.5px solid var(--linea);background:#fff;font-size:12.8px;font-weight:600;color:#3A3A3A;padding:4px;line-height:1.1}
+.seg button.sel.ok,.grid4 button.sel.ok{background:var(--ok-bg);border-color:var(--ok);color:var(--ok)}
+.seg button.sel.warn{background:var(--warn-bg);border-color:var(--warn);color:var(--warn)}
+.seg button.sel.bad,.grid4 button.sel.bad{background:var(--bad-bg);border-color:var(--bad);color:var(--bad)}
+.seg button.sel.na,.grid4 button.sel.na{background:var(--na-bg);border-color:var(--na);color:var(--na)}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.grid3 button{min-height:48px;border-radius:10px;border:1.5px solid var(--linea);background:#fff;font-size:13px;font-weight:600;color:#3A3A3A;padding:4px;line-height:1.1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
+.grid3 button small{font-size:10px;font-weight:600;color:var(--bad)}
+.grid3 button.sel.ok{background:var(--ok-bg);border-color:var(--ok);color:var(--ok)}
+.grid3 button.sel.bad{background:var(--bad-bg);border-color:var(--bad);color:var(--bad)}
+.grid3 button.sel.na{background:var(--na-bg);border-color:var(--na);color:var(--na)}
+.dot{display:inline-block;width:14px;height:14px;border-radius:50%;border:1px solid rgba(0,0,0,.15)}
+.det{margin-top:7px;display:flex;align-items:center;gap:8px;font-size:13.5px}
+.det button{border:1.5px solid var(--linea);background:#fff;border-radius:999px;padding:6px 12px;font-weight:600;font-size:13px}
+.det button.sel{background:var(--warn-bg);border-color:var(--warn);color:var(--warn)}
+.leyenda{font-size:12px;color:var(--sub);margin-top:6px}
+/* barra inferior */
+.barra{position:fixed;left:0;right:0;bottom:0;z-index:30;background:#fff;border-top:1px solid var(--linea);padding:8px 10px calc(8px + env(safe-area-inset-bottom));box-shadow:0 -4px 14px rgba(0,0,0,.06)}
+.barra .in{max-width:760px;margin:0 auto}
+.barra .prog{font-size:12px;color:var(--sub);margin-bottom:6px;display:flex;justify-content:space-between}
+.barra .bts{display:grid;grid-template-columns:1fr 1fr 1.4fr;gap:7px}
+.b{min-height:50px;border-radius:12px;font-weight:700;font-size:14px;border:1.5px solid var(--linea);background:#fff;color:#333}
+.b.prim{background:var(--guinda);border-color:var(--guinda);color:#fff}
+.b.verde{background:var(--ok-bg);border-color:#9FD2B3;color:var(--ok)}
+.b.sec{background:#fff}
+.b.peq{min-height:40px;font-size:13px;padding:0 12px}
+.b:disabled{opacity:.45}
+/* registros / resumen */
+.reg{border:1px solid var(--linea);border-radius:12px;padding:10px;margin-bottom:8px;background:#fff}
+.reg .r1{display:flex;justify-content:space-between;gap:8px;align-items:baseline}
+.reg .r1 b{font-size:15px}
+.reg .meta{font-size:12px;color:var(--sub)}
+.reg .h{font-size:13px;margin-top:5px}
+.reg .acc{display:flex;gap:6px;margin-top:8px}
+.badge{font-size:12px;font-weight:700;padding:3px 8px;border-radius:999px;white-space:nowrap}
+.badge.ok{background:var(--ok-bg);color:var(--ok)}.badge.warn{background:var(--warn-bg);color:var(--warn)}.badge.bad{background:var(--bad-bg);color:var(--bad)}
+.kpi{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+.kpi div{background:#fff;border:1px solid var(--linea);border-radius:12px;padding:10px;text-align:center}
+.kpi b{display:block;font-size:22px;color:var(--guinda-2)}
+.kpi span{font-size:11.5px;color:var(--sub)}
+.barras{display:grid;grid-template-columns:auto 1fr auto;gap:5px 8px;align-items:center;font-size:12.5px;margin-top:6px}
+.barras .bar{height:9px;background:#EEE9E2;border-radius:6px;overflow:hidden}
+.barras .bar i{display:block;height:100%;background:var(--ok)}
+.barras .bar i.m{background:var(--warn)}.barras .bar i.b{background:var(--bad)}
+.hl{font-size:13px;margin:6px 0 0;padding-left:18px}
+.hl li{margin:2px 0}
+.vacio{text-align:center;color:var(--sub);padding:30px 10px}
+.toast{position:fixed;left:50%;bottom:120px;transform:translateX(-50%) translateY(20px);background:#222;color:#fff;padding:10px 16px;border-radius:10px;font-size:14px;opacity:0;transition:.25s;z-index:50;max-width:90%;text-align:center;pointer-events:none}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+.aviso{background:#FFF8E6;border:1px solid #EED7A6;color:#6B4A00;border-radius:12px;padding:10px 12px;font-size:13px;margin-bottom:12px}
+.edit-banner{background:#EAF1FB;border:1px solid #B9CDEB;color:#1D4E89;border-radius:12px;padding:9px 12px;font-size:13.5px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.chk{display:flex;align-items:center;gap:8px;padding:6px 0;font-size:14px}
+.chk input{width:20px;height:20px}
+@media (max-width:370px){.seg button,.grid4 button{font-size:11.5px}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="htop">
+    <h1>Higiene de Manos · Levantamiento
+      <small>Infraestructura, insumos y carteles · HGR Reynosa</small></h1>
+    <span id="pill" class="pill" data-act="sync">—</span>
+  </div>
+  <nav>
+    <button data-tab="cap" class="act">Captura</button>
+    <button data-tab="reg">Registros</button>
+    <button data-tab="res">Resumen</button>
+    <button data-tab="aju">Ajustes</button>
+  </nav>
+</header>
+
+<main>
+  <!-- CAPTURA -->
+  <section id="cap" class="act">
+    <div id="avisoCfg"></div>
+    <div id="editBanner"></div>
+
+    <div class="card">
+      <h2>¿Dónde está?</h2>
+      <label class="lbl">Área / servicio</label>
+      <div class="fila">
+        <select id="area"></select>
+        <button class="btn-ico" data-act="nuevaArea" title="Agregar área">＋</button>
+      </div>
+      <div class="leyenda">¿No está el área? Toque ＋. El informe sigue el orden en que va registrando las áreas (1, 2, 3…).</div>
+      <label class="lbl">Tipo de punto</label>
+      <div class="chips" id="tipos"></div>
+      <label class="lbl">Número o nombre</label>
+      <div class="fila">
+        <span class="prefijo" id="prefijo"></span>
+        <button class="btn-ico" data-act="menos">−</button>
+        <input type="text" id="num" class="ident" inputmode="text" autocomplete="off">
+        <button class="btn-ico" data-act="mas">＋</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Infraestructura e insumos</h2>
+      <div id="insumos"></div>
+    </div>
+
+    <div class="card">
+      <h2>Carteles · imagen institucional</h2>
+      <div id="carteles"></div>
+      <div class="leyenda">Si el cartel existe, toque el color/imagen que tiene. Si hay cartel de ambas técnicas, marque los de técnica separados como "No hay": no cuenta como hallazgo. Marque "Deteriorado" si está roto, ilegible o despegado.</div>
+    </div>
+
+    <div class="card">
+      <h2>Observaciones (opcional)</h2>
+      <textarea id="obs" placeholder="Use el micrófono del teclado para dictar…"></textarea>
+    </div>
+  </section>
+
+  <!-- REGISTROS -->
+  <section id="reg">
+    <div class="card">
+      <div class="fila">
+        <select id="filtroArea"></select>
+      </div>
+      <div class="fila" style="margin-top:8px">
+        <button class="b peq" data-act="sync">⟳ Enviar pendientes</button>
+        <button class="b peq" data-act="csv">⬇ Exportar CSV</button>
+      </div>
+    </div>
+    <div id="listaReg"></div>
+  </section>
+
+  <!-- RESUMEN -->
+  <section id="res">
+    <div class="card">
+      <div class="chips" id="filtroFecha">
+        <button class="chip sel" data-f="hoy">Hoy</button>
+        <button class="chip" data-f="todo">Todo lo capturado</button>
+      </div>
+      <div class="leyenda">Calculado con los registros de este dispositivo. El resumen de todo el hospital se actualiza solo en la hoja "Resumen" de Google Sheets.</div>
+    </div>
+    <div id="resumen"></div>
+  </section>
+
+  <!-- AJUSTES -->
+  <section id="aju">
+    <div class="card">
+      <h2>Conexión con Google Sheets</h2>
+      <label class="lbl">URL de la aplicación web (termina en /exec)</label>
+      <input type="url" id="cfgUrl" placeholder="https://script.google.com/macros/s/…/exec">
+      <label class="lbl">Clave</label>
+      <input type="text" id="cfgClave" autocomplete="off">
+      <label class="lbl">Responsable del levantamiento</label>
+      <input type="text" id="cfgResp" placeholder="Nombre de quien verifica">
+      <div class="fila" style="margin-top:10px">
+        <button class="b prim peq" data-act="guardarCfg">Guardar</button>
+        <button class="b peq" data-act="probar">Probar conexión</button>
+      </div>
+    </div>
+    <div class="card">
+      <h2>Botón "Todo conforme"</h2>
+      <label class="lbl">Imagen que se asigna por omisión a los carteles</label>
+      <select id="cfgImg"></select>
+    </div>
+    <div class="card">
+      <h2>Imágenes que se consideran vigentes</h2>
+      <div id="cfgVig"></div>
+      <div class="leyenda">Las que desmarque se registran como "imagen no vigente" (no conformidad, cartel a sustituir).</div>
+    </div>
+    <div class="card">
+      <h2>Datos de este dispositivo</h2>
+      <div class="fila">
+        <button class="b peq" data-act="recargarAreas">⟳ Recargar áreas</button>
+        <button class="b peq" data-act="limpiar">Borrar enviados</button>
+      </div>
+      <div class="fila" style="margin-top:8px"><button class="b peq" data-act="reiniciarOrden">↺ Reiniciar orden del recorrido</button></div>
+      <div class="leyenda" id="infoLocal"></div>
+    </div>
+  </section>
+</main>
+
+<div class="barra" id="barra">
+  <div class="in">
+    <div class="prog"><span id="progTxt"></span><span id="ctx"></span></div>
+    <div class="bts">
+      <button class="b verde" data-act="todoOk">✓ Todo conforme</button>
+      <button class="b sec" data-act="igual">↺ Igual al anterior</button>
+      <button class="b prim" data-act="guardar" id="btnGuardar">Guardar ➜ siguiente</button>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ===== Configuración precargada (opcional): pegue aquí la URL /exec para que nadie tenga que capturarla ===== */
+const API_PREDETERMINADA = '';
+const CLAVE_PREDETERMINADA = 'HGR-HM-2026';
+
+const AREAS_BASE = ['Urgencias Adultos','Urgencias Pediatría','Medicina Interna','Cirugía General',
+ 'Traumatología y Ortopedia','Ginecología y Obstetricia','Tococirugía / Salas de expulsión','Pediatría','UCIN',
+ 'UCIA / Terapia Intensiva','Quirófanos','Recuperación','CEyE','Consulta Externa','Laboratorio Clínico',
+ 'Puesto de sangrado','Imagenología','Farmacia','Nutrición / Cocina','Admisión / Trabajo Social','Áreas administrativas'];
+
+const TIPOS = [
+ {k:'CUB', l:'Cubículo / cama', p:'Cubículo'},
+ {k:'EST', l:'Estación de enfermería', p:'Estación'},
+ {k:'SPE', l:'Sanitario de personal', p:'Sanitario personal'},
+ {k:'SPA', l:'Sanitario de pacientes', p:'Sanitario pacientes'},
+ {k:'CON', l:'Consultorio', p:'Consultorio'},
+ {k:'SEP', l:'Séptico / área de lavado', p:'Séptico'},
+ {k:'OTR', l:'Otro punto', p:'Punto'}
+];
+
+const INSUMOS = [
+ {k:'lavabo', l:'Lavabo', i:'🚰', o:[['Funcional','ok'],['No funcional','bad'],['No hay','bad'],['N/A','na']]},
+ {k:'agua', l:'Agua corriente', i:'💧', o:[['Sí','ok'],['Intermitente','warn'],['No','bad'],['N/A','na']]},
+ {k:'temp', l:'Agua fría y caliente', i:'🌡️', o:[['Fría y caliente','ok'],['Solo fría','warn'],['Solo caliente','warn'],['N/A','na']]},
+ {k:'fugas', l:'Fugas (llave y desagüe)', i:'🔧', o:[['Sin fugas','ok'],['Fuga o goteo','bad'],['Desagüe tapado','bad'],['N/A','na']]},
+ {k:'jabon', l:'Jabón', i:'🧼', o:[['Con jabón','ok'],['Vacío','warn'],['Sin dispensador','bad'],['N/A','na']]},
+ {k:'sanitas', l:'Sanitas (toallas de papel)', i:'🧻', o:[['Con sanitas','ok'],['Vacío','warn'],['Sin despachador','bad'],['N/A','na']]},
+ {k:'gel', l:'Alcohol gel', i:'🧴', o:[['Con gel','ok'],['Vacío','warn'],['Sin dispensador','bad'],['N/A','na']]}
+];
+
+const CARTELES = [
+ {k:'c5m', l:'Cartel 5 Momentos', i:'🖐️'},
+ {k:'ctl', l:'Cartel técnica · agua y jabón', i:'🫧'},
+ {k:'cta', l:'Cartel técnica · alcohol gel', i:'✋'},
+ {k:'cam', l:'Cartel ambas técnicas (agua y gel)', i:'🙌'}
+];
+// El cartel de ambas técnicas sustituye a los dos de técnica: si existe, su ausencia no es hallazgo y viceversa.
+
+// [valor guardado, texto del botón, color de muestra]
+const IMAGENES = [
+ ['Naranja – campaña original','Naranja','#F28C28'],
+ ['Azul – adm. PAN','Azul','#2B6CB0'],
+ ['Guinda – adm. Morena','Guinda','#9F2241'],
+ ['Neutro / OMS / otro','Neutro / otro','#9AA0A6'],
+ ['No hay','No hay',''],
+ ['N/A','N/A','']
+];
+const SIN_CARTEL = ['No hay','N/A'];
+
+/* ===== Estado ===== */
+const LS = {cfg:'hm_cfg_v2', recs:'hm_recs_v1', areas:'hm_areas_v1', cur:'hm_cur_v2'};
+const leer = (k, d) => { try { const v = JSON.parse(localStorage.getItem(k)); return v ?? d; } catch(e){ return d; } };
+const escribir = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch(e){} };
+
+const qs = new URLSearchParams(location.search);
+let cfg = Object.assign({
+  url: API_PREDETERMINADA, clave: CLAVE_PREDETERMINADA, resp: '', img: 'Guinda – adm. Morena',
+  vig: {'Naranja – campaña original':true,'Azul – adm. PAN':false,'Guinda – adm. Morena':true,'Neutro / OMS / otro':true}
+}, leer(LS.cfg, {}));
+if (qs.get('api')) cfg.url = qs.get('api');
+if (qs.get('clave')) cfg.clave = qs.get('clave');
+
+let recs = leer(LS.recs, []);
+let areas = leer(LS.areas, null) || AREAS_BASE.slice();
+let cur = Object.assign({area:'', tipo:'CUB', num:'1', v:{}, e:{}, obs:'', editId:null}, leer(LS.cur, {}));
+let filtroFecha = 'hoy';
+// Orden del recorrido: número de área según la primera vez que se registra, y consecutivo de puntos
+let orden = Object.assign({areas:{}, seq:0}, leer('hm_orden_v1', {}));
+const guardarOrden = () => escribir('hm_orden_v1', orden);
+const numArea = a => orden.areas[a] || 0;
+function ordenarAreas(nombres){ return [...nombres].sort((a,b) => (numArea(a)||1e9) - (numArea(b)||1e9) || a.localeCompare(b,'es')); }
+const porSeq = (a,b) => (a.seq||0) - (b.seq||0);
+
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const hoy = () => { const d = new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); };
+const hora = () => { const d = new Date(); return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0'); };
+const tipoDe = k => TIPOS.find(t => t.k === k) || TIPOS[0];
+const guardarCur = () => escribir(LS.cur, cur);
+const guardarRecs = () => escribir(LS.recs, recs);
+
+function toast(t){ const el = $('toast'); el.textContent = t; el.classList.add('on'); clearTimeout(toast._t); toast._t = setTimeout(() => el.classList.remove('on'), 2300); }
+
+/* ===== Cálculo de conformidad ===== */
+function clase(k, val){ const it = INSUMOS.find(x => x.k === k); const o = it && it.o.find(x => x[0] === val); return o ? o[1] : ''; }
+
+function evaluar(v, e){
+  let apl = 0, conf = 0, noVig = 0; const h = [];
+  INSUMOS.forEach(it => {
+    const c = clase(it.k, v[it.k]);
+    if (!c || c === 'na') return;
+    apl++;
+    if (c === 'ok') conf++; else h.push(it.l.replace(' (toallas de papel)','') + ': ' + v[it.k].toLowerCase());
+  });
+  CARTELES.forEach(ca => {
+    const st = estadoCartel(v, e, ca.k);
+    if (st === 'na') return;
+    apl++;
+    if (st === 'ok') conf++;
+    else if (st === 'nohay') h.push(ca.l + ': no hay');
+    else if (st === 'novig') { noVig++; h.push(ca.l + ': imagen no vigente (' + v[ca.k] + ')'); }
+    else if (st === 'det') h.push(ca.l + ': deteriorado');
+  });
+  return { cumpl: apl ? Math.round(100 * conf / apl) : 100, nc: apl - conf, noVig, hallazgos: h };
+}
+
+// v = respuestas (o registro), e = deteriorados {k:true} (en registros se usa el campo k_est)
+function estadoCartel(v, e, k){
+  const img = v[k];
+  const hay = x => v[x] && v[x] !== 'No hay' && v[x] !== 'N/A';
+  if (!img || img === 'N/A') return 'na';
+  if (img === 'No hay') {
+    if (k === 'cam' && (hay('ctl') || hay('cta'))) return 'na';   // ya tiene carteles separados
+    if ((k === 'ctl' || k === 'cta') && hay('cam')) return 'na';  // lo cubre el de ambas técnicas
+    return 'nohay';
+  }
+  if (cfg.vig[img] === false) return 'novig';
+  if ((e && e[k]) || v[k + '_est'] === 'Deteriorado') return 'det';
+  return 'ok';
+}
+
+/* ===== Render captura ===== */
+function renderAreas(){
+  const lista = [...new Set(areas.concat(Object.keys(orden.areas)))];
+  const hechas = ordenarAreas(lista.filter(a => numArea(a)));
+  const faltan = lista.filter(a => !numArea(a)).sort((a,b) => a.localeCompare(b,'es'));
+  const opt = (a, txt) => `<option value="${esc(a)}" ${a===cur.area?'selected':''}>${esc(txt)}</option>`;
+  $('area').innerHTML = '<option value="">— Seleccione el área —</option>' +
+    (hechas.length ? '<optgroup label="Ya recorridas (en orden)">' + hechas.map(a => opt(a, numArea(a) + '. ' + a + ' ✓')).join('') + '</optgroup>' : '') +
+    '<optgroup label="Por recorrer">' + faltan.map(a => opt(a, a)).join('') + '</optgroup>' +
+    '<option value="__nueva__">＋ Agregar un área que no está en la lista…</option>';
+  $('filtroArea').innerHTML = '<option value="">Todas las áreas</option>' + hechas.concat(faltan).map(a => `<option value="${esc(a)}">${esc(a)}</option>`).join('');
+}
+
+function renderTipos(){
+  $('tipos').innerHTML = TIPOS.map(t => `<button class="chip ${t.k===cur.tipo?'sel':''}" data-tipo="${t.k}">${t.l}</button>`).join('');
+  $('prefijo').textContent = tipoDe(cur.tipo).p;
+  $('num').value = cur.num;
+}
+
+function renderItems(marcarFaltantes){
+  $('insumos').innerHTML = INSUMOS.map(it => `
+    <div class="item ${marcarFaltantes && !cur.v[it.k] ? 'miss':''}" id="it_${it.k}">
+      <div class="t"><span class="ic">${it.i}</span>${it.l}</div>
+      <div class="seg">${it.o.map(o => `<button class="${o[1]} ${cur.v[it.k]===o[0]?'sel':''}" data-set="${it.k}" data-val="${esc(o[0])}">${o[0]}</button>`).join('')}</div>
+    </div>`).join('');
+
+  $('carteles').innerHTML = CARTELES.map(ca => {
+    const sel = cur.v[ca.k];
+    const presente = sel && !SIN_CARTEL.includes(sel);
+    return `<div class="item ${marcarFaltantes && !sel ? 'miss':''}" id="it_${ca.k}">
+      <div class="t"><span class="ic">${ca.i}</span>${ca.l}</div>
+      <div class="grid3">${IMAGENES.map(im => {
+        let c = 'ok';
+        if (im[0]==='No hay') c = 'bad'; else if (im[0]==='N/A') c = 'na'; else if (cfg.vig[im[0]]===false) c = 'bad';
+        const dot = im[2] ? `<i class="dot" style="background:${im[2]}"></i>` : '';
+        return `<button class="${c} ${sel===im[0]?'sel':''}" data-set="${ca.k}" data-val="${esc(im[0])}">${dot}${esc(im[1])}${im[2] && cfg.vig[im[0]]===false ? '<small>no vigente</small>' : ''}</button>`;
+      }).join('')}</div>
+      ${presente ? `<div class="det">Estado: <button data-det="${ca.k}" class="${cur.e[ca.k]?'':'sel-ok'}" style="${cur.e[ca.k]?'':'border-color:var(--ok);background:var(--ok-bg);color:var(--ok)'}">Buen estado</button><button data-det="${ca.k}" data-d="1" class="${cur.e[ca.k]?'sel':''}">Deteriorado</button></div>` : ''}
+    </div>`;
+  }).join('');
+  $('obs').value = cur.obs || '';
+  renderProgreso();
+}
+
+function renderProgreso(){
+  const total = INSUMOS.length + CARTELES.length;
+  const resp = INSUMOS.concat(CARTELES).filter(x => cur.v[x.k]).length;
+  const ev = evaluar(cur.v, cur.e);
+  $('progTxt').innerHTML = `<b>${resp}/${total}</b> respondidos` + (resp ? ` · ${ev.nc} hallazgo${ev.nc===1?'':'s'}` : '');
+  $('ctx').textContent = (cur.area ? (numArea(cur.area) ? numArea(cur.area) + '. ' : 'Nueva → ' + (Object.keys(orden.areas).length + 1) + '. ') + cur.area + ' · ' : '') + tipoDe(cur.tipo).p + ' ' + (cur.num || '');
+  $('btnGuardar').textContent = cur.editId ? 'Guardar cambios' : 'Guardar ➜ siguiente';
+  $('editBanner').innerHTML = cur.editId ? `<div class="edit-banner"><span>✏️ Editando un registro guardado</span><button class="b peq" data-act="cancelarEd">Cancelar</button></div>` : '';
+  $('avisoCfg').innerHTML = !cfg.url ? `<div class="aviso">Falta conectar con Google Sheets (pestaña <b>Ajustes</b>). Puede capturar de todos modos: los registros se guardan en el teléfono y se envían después.</div>` :
+    (!cfg.resp ? `<div class="aviso">Escriba su nombre como responsable en <b>Ajustes</b>.</div>` : '');
+}
+
+function renderTodo(){ renderAreas(); renderTipos(); renderItems(); pill(); }
+
+
+/* ===== Acciones de captura ===== */
+function fijar(k, val){
+  cur.v[k] = val;
+  if (k === 'lavabo' && (val === 'No hay' || val === 'N/A')) {
+    ['agua','temp','fugas','jabon','sanitas'].forEach(x => cur.v[x] = 'N/A');
+    if (!cur.v.ctl) cur.v.ctl = 'N/A';
+  }
+  if (SIN_CARTEL.includes(val)) delete cur.e[k];
+  guardarCur(); renderItems();
+}
+
+function todoConforme(){
+  INSUMOS.forEach(it => cur.v[it.k] = it.o[0][0]);
+  CARTELES.forEach(ca => { cur.v[ca.k] = cfg.img; delete cur.e[ca.k]; });
+  cur.v.cam = 'N/A';
+  if (cur.tipo === 'SPE' || cur.tipo === 'SPA') { cur.v.c5m = 'N/A'; cur.v.cta = 'N/A'; cur.v.gel = 'N/A'; }
+  guardarCur(); renderItems(); toast('Marcado como conforme. Corrija solo lo que falte.');
+}
+
+function igualAnterior(){
+  const prev = [...recs].reverse().find(r => r.area === cur.area && r._tipo === cur.tipo) || [...recs].reverse().find(r => r.area === cur.area) || recs[recs.length-1];
+  if (!prev) return toast('Aún no hay un registro anterior');
+  INSUMOS.concat(CARTELES).forEach(x => cur.v[x.k] = prev[x.k]);
+  cur.e = Object.assign({}, prev._det || {});
+  guardarCur(); renderItems(); toast('Copiado de ' + prev.ident);
+}
+
+function numInicial(area, tipo){
+  const usados = recs.filter(r => r.fecha === hoy() && r.area === area && r._tipo === tipo).map(r => parseInt(r._num,10)).filter(n => !isNaN(n));
+  if (usados.length) return String(Math.max(...usados) + 1);
+  return tipo === 'EST' ? 'Central' : '1';
+}
+function agregarArea(){
+  const n = (prompt('Nombre del área o servicio que no está en la lista:') || '').replace(/\s+/g,' ').trim();
+  if (!n) return;
+  const existe = areas.find(a => a.toLowerCase() === n.toLowerCase());
+  const nombre = existe || n;
+  if (!existe) { areas.push(nombre); escribir(LS.areas, areas); }
+  cur.area = nombre; if (!cur.editId) cur.num = numInicial(nombre, cur.tipo);
+  guardarCur(); renderAreas(); renderTipos(); renderProgreso();
+  toast(existe ? 'Esa área ya existía: seleccionada' : 'Área agregada: ' + nombre + '. Tomará su número de orden al guardar el primer punto.');
+  if (!existe && cfg.url && navigator.onLine) api({accion:'agregarArea', area: nombre}).catch(() => {});
+}
+function siguienteNum(n){ const m = String(n).match(/^(.*?)(\d+)$/); return m ? m[1] + (parseInt(m[2],10) + 1) : n; }
+function anteriorNum(n){ const m = String(n).match(/^(.*?)(\d+)$/); return m ? m[1] + Math.max(1, parseInt(m[2],10) - 1) : n; }
+
+function guardar(){
+  cur.area = $('area').value; cur.num = $('num').value.trim(); cur.obs = $('obs').value.trim();
+  if (!cur.area) { toast('Seleccione el área'); $('area').focus(); window.scrollTo({top:0,behavior:'smooth'}); return; }
+  if (!cur.num) { toast('Escriba el número o nombre del punto'); $('num').focus(); return; }
+  const faltan = INSUMOS.concat(CARTELES).filter(x => !cur.v[x.k]);
+  if (faltan.length) {
+    renderItems(true);
+    const el = $('it_' + faltan[0].k); if (el) el.scrollIntoView({behavior:'smooth', block:'center'});
+    toast('Faltan ' + faltan.length + ' respuesta' + (faltan.length>1?'s':''));
+    return;
+  }
+  const t = tipoDe(cur.tipo);
+  const ident = t.p + ' ' + cur.num;
+  if (!cur.editId && recs.some(r => r.fecha === hoy() && r.area === cur.area && r.ident === ident)) {
+    if (!confirm(ident + ' de ' + cur.area + ' ya se capturó hoy. ¿Guardar otro registro de todos modos?')) return;
+  }
+  const ev = evaluar(cur.v, cur.e);
+  const previo = cur.editId ? recs.find(r => r.id === cur.editId) : null;
+  const r = {
+    id: cur.editId || ('HM-' + Date.now().toString(36).toUpperCase() + '-' + Math.random().toString(36).slice(2,5).toUpperCase()),
+    fecha: previo ? previo.fecha : hoy(), hora: previo ? previo.hora : hora(),
+    responsable: cfg.resp || '', area: cur.area, tipo: t.l, ident,
+    obs: cur.obs, noVig: ev.noVig, nc: ev.nc, cumpl: ev.cumpl,
+    hallazgos: ev.hallazgos.length ? ev.hallazgos.join('; ') : 'Sin hallazgos',
+    ordenArea: 0, seq: previo ? previo.seq : 0,
+    _tipo: cur.tipo, _num: cur.num, _det: Object.assign({}, cur.e), _v: Date.now(), sync: false
+  };
+  INSUMOS.forEach(it => r[it.k] = cur.v[it.k]);
+  CARTELES.forEach(ca => {
+    r[ca.k] = cur.v[ca.k];
+    r[ca.k + '_est'] = SIN_CARTEL.includes(cur.v[ca.k]) ? '' : (cur.e[ca.k] ? 'Deteriorado' : 'Buen estado');
+  });
+
+  if (!orden.areas[r.area]) orden.areas[r.area] = Math.max(0, ...Object.values(orden.areas)) + 1;
+  r.ordenArea = orden.areas[r.area];
+  if (!r.seq) r.seq = ++orden.seq;
+  guardarOrden();
+  if (!areas.includes(r.area)) { areas.push(r.area); escribir(LS.areas, areas); }
+  if (previo) recs[recs.indexOf(previo)] = r; else recs.push(r);
+  guardarRecs();
+
+  const fueEdicion = !!cur.editId;
+  cur.v = {}; cur.e = {}; cur.obs = ''; cur.editId = null;
+  if (!fueEdicion) cur.num = siguienteNum(cur.num);
+  guardarCur(); renderAreas(); renderTipos(); renderItems();
+  window.scrollTo({top:0, behavior:'smooth'});
+  toast((fueEdicion ? 'Actualizado: ' : 'Guardado: ') + ident + ' · ' + (ev.nc ? ev.nc + ' hallazgo' + (ev.nc>1?'s':'') : 'conforme ✓'));
+  sincronizar(true);
+}
+
+/* ===== Sincronización con Google Sheets ===== */
+let enviando = false;
+function pendientes(){ return recs.filter(r => !r.sync); }
+function limpio(r){ const o = {}; Object.keys(r).forEach(k => { if (k[0] !== '_' && k !== 'sync') o[k] = r[k]; }); return o; }
+
+function pill(estado){
+  const p = $('pill'); const n = pendientes().length;
+  p.className = 'pill';
+  if (estado === 'enviando') { p.textContent = 'Enviando…'; return; }
+  if (!cfg.url) { p.textContent = n ? '● ' + n + ' sin enviar' : 'Sin conexión a Sheets'; p.classList.add('pend'); return; }
+  if (estado === 'error') { p.textContent = '⚠ ' + n + ' pendiente' + (n===1?'':'s'); p.classList.add('err'); return; }
+  if (n) { p.textContent = '● ' + n + ' pendiente' + (n===1?'':'s'); p.classList.add('pend'); }
+  else { p.textContent = '✓ Sincronizado'; p.classList.add('okp'); }
+}
+
+async function api(cuerpo){
+  const res = await fetch(cfg.url, { method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'}, body: JSON.stringify(Object.assign({clave: cfg.clave}, cuerpo)) });
+  return res.json();
+}
+
+async function sincronizar(silencioso){
+  if (enviando) return;
+  const pend = pendientes();
+  if (!pend.length || !cfg.url) { pill(); return; }
+  if (!navigator.onLine) { pill(); if (!silencioso) toast('Sin internet: se enviará después'); return; }
+  enviando = true; pill('enviando');
+  const versiones = new Map(pend.map(r => [r.id, r._v]));
+  try {
+    for (let i = 0; i < pend.length; i += 40) {
+      const lote = pend.slice(i, i + 40);
+      const j = await api({ accion:'guardar', registros: lote.map(limpio) });
+      if (!j.ok) throw new Error(j.error || 'Error');
+      const ok = new Set(j.ids);
+      recs.forEach(r => { if (ok.has(r.id) && versiones.get(r.id) === r._v) r.sync = true; });
+      guardarRecs();
+    }
+    enviando = false; pill();
+    if (!silencioso) toast('Enviado a Google Sheets ✓');
+  } catch(err) {
+    enviando = false; pill('error');
+    if (!silencioso || /Clave/.test(err.message)) toast('No se pudo enviar: ' + err.message);
+  }
+  if ($('reg').classList.contains('act')) renderRegistros();
+}
+
+async function cargarAreas(avisar){
+  if (!cfg.url) { if (avisar) toast('Primero capture la URL'); return; }
+  try {
+    const res = await fetch(cfg.url + (cfg.url.includes('?') ? '&' : '?') + 'accion=areas');
+    const j = await res.json();
+    if (j.ok && j.areas && j.areas.length) {
+      const propias = (leer(LS.areas, []) || []).filter(a => !AREAS_BASE.includes(a) && !j.areas.includes(a));
+      areas = j.areas.concat(propias);
+      escribir(LS.areas, areas); renderAreas();
+      if (avisar) toast('Conexión correcta · ' + j.areas.length + ' áreas');
+    }
+  } catch(e) { if (avisar) toast('No se pudo conectar. Revise la URL e implementación.'); }
+}
+
+/* ===== Registros ===== */
+function badge(c){ return `<span class="badge ${c>=90?'ok':c>=70?'warn':'bad'}">${c}%</span>`; }
+
+function renderRegistros(){
+  const fa = $('filtroArea').value;
+  const lista = [...recs].reverse().filter(r => !fa || r.area === fa);
+  if (!lista.length) { $('listaReg').innerHTML = '<div class="vacio">Sin registros todavía.</div>'; return; }
+  $('listaReg').innerHTML = lista.map(r => `
+    <div class="reg">
+      <div class="r1"><b>${esc(r.ident)}</b>${badge(r.cumpl)}</div>
+      <div class="meta">${r.ordenArea ? r.ordenArea + '. ' : ''}${esc(r.area)} · #${r.seq || '-'} · ${esc(r.fecha)} ${esc(r.hora)} · ${r.sync ? '✓ enviado' : '● pendiente'}</div>
+      <div class="h">${r.nc ? '⚠ ' + esc(r.hallazgos) : '✓ Sin hallazgos'}</div>
+      ${r.obs ? `<div class="meta">📝 ${esc(r.obs)}</div>` : ''}
+      <div class="acc"><button class="b peq" data-edit="${r.id}">Editar</button><button class="b peq" data-del="${r.id}">Borrar</button></div>
+    </div>`).join('');
+}
+
+function editar(id){
+  const r = recs.find(x => x.id === id); if (!r) return;
+  cur = { area: r.area, tipo: r._tipo || 'CUB', num: r._num || r.ident, v:{}, e: Object.assign({}, r._det || {}), obs: r.obs || '', editId: r.id };
+  INSUMOS.concat(CARTELES).forEach(x => cur.v[x.k] = r[x.k]);
+  guardarCur(); tab('cap'); renderTodo(); window.scrollTo({top:0});
+}
+
+async function borrar(id){
+  const r = recs.find(x => x.id === id); if (!r) return;
+  if (!confirm('¿Borrar ' + r.ident + ' de ' + r.area + '?')) return;
+  if (r.sync) {
+    if (!cfg.url || !navigator.onLine) return toast('Necesita internet para borrarlo también de Sheets');
+    try { const j = await api({ accion:'borrar', ids:[id] }); if (!j.ok) throw new Error(j.error); }
+    catch(e){ return toast('No se pudo borrar en Sheets: ' + e.message); }
+  }
+  recs = recs.filter(x => x.id !== id); guardarRecs(); renderRegistros(); pill(); toast('Registro borrado');
+}
+
+function exportarCSV(){
+  if (!recs.length) return toast('No hay registros');
+  const cols = [['fecha','Fecha'],['hora','Hora'],['responsable','Responsable'],['area','Área'],['tipo','Tipo de punto'],['ident','Identificador'],
+    ['lavabo','Lavabo'],['agua','Agua corriente'],['temp','Agua fría/caliente'],['fugas','Fugas'],['jabon','Jabón'],['sanitas','Sanitas'],['gel','Alcohol gel'],
+    ['c5m','Cartel 5 Momentos'],['c5m_est','Estado'],['ctl','Cartel técnica agua y jabón'],['ctl_est','Estado'],['cta','Cartel técnica alcohol gel'],['cta_est','Estado'],['cam','Cartel ambas técnicas'],['cam_est','Estado'],
+    ['noVig','Carteles imagen no vigente'],['nc','No conformidades'],['cumpl','Cumplimiento %'],['hallazgos','Hallazgos'],['obs','Observaciones'],['ordenArea','Orden de área'],['seq','No. consecutivo'],['id','ID']];
+  const q = v => '"' + String(v ?? '').replace(/"/g,'""') + '"';
+  const txt = '﻿' + cols.map(c => q(c[1])).join(',') + '\n' + [...recs].sort((a,b) => (a.ordenArea||0)-(b.ordenArea||0) || porSeq(a,b)).map(r => cols.map(c => q(r[c[0]])).join(',')).join('\n');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([txt], {type:'text/csv;charset=utf-8'}));
+  a.download = 'Levantamiento_HM_' + hoy() + '.csv'; a.click();
+}
+
+/* ===== Resumen ===== */
+function renderResumen(){
+  const lista = recs.filter(r => filtroFecha === 'todo' || r.fecha === hoy());
+  if (!lista.length) { $('resumen').innerHTML = '<div class="vacio">Sin registros para este periodo.</div>'; return; }
+  const totalNC = lista.filter(r => r.nc > 0).length;
+  const prom = Math.round(lista.reduce((s,r) => s + r.cumpl, 0) / lista.length);
+  const porArea = {};
+  lista.forEach(r => (porArea[r.area] = porArea[r.area] || []).push(r));
+
+  const indic = rs => {
+    const filas = INSUMOS.map(it => {
+      const apl = rs.filter(r => r[it.k] && r[it.k] !== 'N/A'); const ok = apl.filter(r => r[it.k] === it.o[0][0]).length;
+      return [it.i + ' ' + it.l.replace(' (toallas de papel)',''), ok, apl.length];
+    }).concat(CARTELES.map(ca => {
+      const apl = rs.filter(r => estadoCartel(r, null, ca.k) !== 'na');
+      const ok = apl.filter(r => estadoCartel(r, null, ca.k) === 'ok').length;
+      return [ca.i + ' ' + ca.l.replace('Cartel ',''), ok, apl.length];
+    }));
+    return '<div class="barras">' + filas.map(f => {
+      if (!f[2]) return `<span>${f[0]}</span><div class="bar"></div><span>N/A</span>`;
+      const p = Math.round(100 * f[1] / f[2]);
+      return `<span>${f[0]}</span><div class="bar"><i class="${p>=90?'':p>=70?'m':'b'}" style="width:${p}%"></i></div><span>${f[1]}/${f[2]}</span>`;
+    }).join('') + '</div>';
+  };
+
+  let html = `<div class="kpi"><div><b>${lista.length}</b><span>puntos verificados</span></div><div><b>${prom}%</b><span>cumplimiento promedio</span></div><div><b>${totalNC}</b><span>puntos con hallazgos</span></div></div>`;
+  html += `<div class="card"><div class="fila"><button class="b prim peq" data-act="copiarH">📋 Copiar lista de hallazgos</button><button class="b peq" data-act="waH">WhatsApp</button></div></div>`;
+  ordenarAreas(Object.keys(porArea)).forEach(a => {
+    const rs = porArea[a].sort(porSeq);
+    const p = Math.round(rs.reduce((s,r) => s + r.cumpl, 0) / rs.length);
+    const conH = rs.filter(r => r.nc > 0);
+    html += `<div class="card"><div class="r1" style="display:flex;justify-content:space-between;align-items:center"><b style="font-size:15.5px">${numArea(a) ? numArea(a) + '. ' : ''}${esc(a)}</b>${badge(p)}</div>
+      <div class="leyenda" style="margin-top:2px">${rs.length} punto${rs.length>1?'s':''} · ${conH.length} con hallazgos</div>
+      ${indic(rs)}
+      ${conH.length ? '<ul class="hl">' + conH.map(r => `<li><b>${esc(r.ident)}:</b> ${esc(r.hallazgos)}</li>`).join('') + '</ul>' : ''}
+    </div>`;
+  });
+  $('resumen').innerHTML = html;
+}
+
+function textoHallazgos(){
+  const lista = recs.filter(r => (filtroFecha === 'todo' || r.fecha === hoy()) && r.nc > 0);
+  if (!lista.length) return '';
+  const porArea = {};
+  lista.forEach(r => (porArea[r.area] = porArea[r.area] || []).push(r));
+  let t = '*Levantamiento Higiene de Manos — HGR Reynosa*\n' + (filtroFecha === 'hoy' ? 'Fecha: ' + hoy() + '\n' : '') + '\n';
+  ordenarAreas(Object.keys(porArea)).forEach(a => {
+    t += '*' + (numArea(a) ? numArea(a) + '. ' : '') + a + '*\n' + porArea[a].sort(porSeq).map(r => '• ' + r.ident + ': ' + r.hallazgos).join('\n') + '\n\n';
+  });
+  return t.trim();
+}
+
+/* ===== Ajustes ===== */
+function renderAjustes(){
+  $('cfgUrl').value = cfg.url || ''; $('cfgClave').value = cfg.clave || ''; $('cfgResp').value = cfg.resp || '';
+  $('cfgImg').innerHTML = IMAGENES.filter(i => !SIN_CARTEL.includes(i[0])).map(i => `<option ${i[0]===cfg.img?'selected':''}>${esc(i[0])}</option>`).join('');
+  $('cfgVig').innerHTML = IMAGENES.filter(i => !SIN_CARTEL.includes(i[0])).map(i =>
+    `<label class="chk"><input type="checkbox" data-vig="${esc(i[0])}" ${cfg.vig[i[0]]!==false?'checked':''}> ${esc(i[0])}</label>`).join('');
+  $('infoLocal').textContent = recs.length + ' registros en este teléfono · ' + pendientes().length + ' pendientes de envío.';
+}
+
+function guardarCfg(){
+  cfg.url = $('cfgUrl').value.trim(); cfg.clave = $('cfgClave').value.trim(); cfg.resp = $('cfgResp').value.trim();
+  cfg.img = $('cfgImg').value;
+  escribir(LS.cfg, cfg); pill(); renderProgreso(); toast('Ajustes guardados');
+  cargarAreas(false); sincronizar(true);
+}
+
+/* ===== Navegación y eventos ===== */
+function tab(t){
+  document.querySelectorAll('nav button').forEach(b => b.classList.toggle('act', b.dataset.tab === t));
+  document.querySelectorAll('main section').forEach(s => s.classList.toggle('act', s.id === t));
+  $('barra').style.display = t === 'cap' ? '' : 'none';
+  if (t === 'reg') renderRegistros();
+  if (t === 'res') renderResumen();
+  if (t === 'aju') renderAjustes();
+  window.scrollTo({top:0});
+}
+
+document.addEventListener('click', async ev => {
+  const b = ev.target.closest('button, [data-act]'); if (!b) return;
+  if (b.dataset.tab) return tab(b.dataset.tab);
+  if (b.dataset.set) return fijar(b.dataset.set, b.dataset.val);
+  if (b.dataset.det) { if (b.dataset.d) cur.e[b.dataset.det] = true; else delete cur.e[b.dataset.det]; guardarCur(); return renderItems(); }
+  if (b.dataset.tipo) { cur.tipo = b.dataset.tipo; cur.num = numInicial(cur.area, cur.tipo); guardarCur(); renderTipos(); return renderProgreso(); }
+  if (b.dataset.edit) return editar(b.dataset.edit);
+  if (b.dataset.del) return borrar(b.dataset.del);
+  if (b.dataset.f) { filtroFecha = b.dataset.f; document.querySelectorAll('#filtroFecha .chip').forEach(c => c.classList.toggle('sel', c === b)); return renderResumen(); }
+  switch (b.dataset.act) {
+    case 'todoOk': return todoConforme();
+    case 'igual': return igualAnterior();
+    case 'guardar': return guardar();
+    case 'mas': cur.num = siguienteNum($('num').value.trim() || '0'); guardarCur(); $('num').value = cur.num; return renderProgreso();
+    case 'menos': cur.num = anteriorNum($('num').value.trim() || '1'); guardarCur(); $('num').value = cur.num; return renderProgreso();
+    case 'nuevaArea': return agregarArea();
+    case 'reiniciarOrden': {
+      if (confirm('Se reinicia la numeración del recorrido (la siguiente área registrada será la 1). Los registros ya hechos conservan su número. ¿Continuar?')) { orden = {areas:{}, seq:0}; guardarOrden(); renderAreas(); renderProgreso(); toast('Orden reiniciado'); }
+      return;
+    }
+    case 'cancelarEd': cur.v = {}; cur.e = {}; cur.obs = ''; cur.editId = null; guardarCur(); return renderTodo();
+    case 'sync': return sincronizar(false);
+    case 'csv': return exportarCSV();
+    case 'guardarCfg': return guardarCfg();
+    case 'probar': cfg.url = $('cfgUrl').value.trim(); return cargarAreas(true);
+    case 'recargarAreas': return cargarAreas(true);
+    case 'limpiar': {
+      const n = recs.filter(r => r.sync).length;
+      if (!n) return toast('No hay registros enviados que borrar');
+      if (confirm('Se quitarán de este teléfono ' + n + ' registros ya enviados (siguen en Google Sheets). ¿Continuar?')) { recs = recs.filter(r => !r.sync); guardarRecs(); renderAjustes(); toast('Listo'); }
+      return;
+    }
+    case 'copiarH': {
+      const t = textoHallazgos(); if (!t) return toast('No hay hallazgos');
+      try { await navigator.clipboard.writeText(t); toast('Lista copiada'); } catch(e) { prompt('Copie el texto:', t); }
+      return;
+    }
+    case 'waH': { const t = textoHallazgos(); if (!t) return toast('No hay hallazgos'); window.open('https://wa.me/?text=' + encodeURIComponent(t), '_blank'); return; }
+  }
+});
+
+document.addEventListener('change', ev => {
+  if (ev.target.id === 'area' && ev.target.value === '__nueva__') { ev.target.value = cur.area || ''; return agregarArea(); }
+  if (ev.target.id === 'area') { cur.area = ev.target.value; if (!cur.editId) { cur.num = numInicial(cur.area, cur.tipo); $('num').value = cur.num; } guardarCur(); renderProgreso(); }
+  if (ev.target.id === 'filtroArea') renderRegistros();
+  if (ev.target.dataset.vig) { cfg.vig[ev.target.dataset.vig] = ev.target.checked; escribir(LS.cfg, cfg); renderItems(); }
+  if (ev.target.id === 'cfgImg') { cfg.img = ev.target.value; escribir(LS.cfg, cfg); }
+});
+$('num').addEventListener('input', e => { cur.num = e.target.value; guardarCur(); renderProgreso(); });
+$('obs').addEventListener('input', e => { cur.obs = e.target.value; guardarCur(); });
+window.addEventListener('online', () => sincronizar(true));
+setInterval(() => sincronizar(true), 60000);
+
+renderTodo();
+cargarAreas(false);
+sincronizar(true);
+</script>
+</body>
+</html>
